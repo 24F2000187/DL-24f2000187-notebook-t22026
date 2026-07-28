@@ -43,7 +43,8 @@ competition data.
 │   ├── milestone-2.ipynb            # transformers, attention, zero-shot
 │   ├── milestone-3.ipynb            # RAG pipeline
 │   ├── milestone-4.ipynb            # MCQ formatting + LoRA fine-tuning
-│   └── milestone-5.ipynb            # ensembling
+│   ├── milestone-5.ipynb            # ensembling
+│   └── final_notebook.ipynb         # final report: Macro F1, error analysis, insights, submission
 │
 ├── src/
 │   ├── train.py             # trains the baseline TF-IDF+LogReg model
@@ -58,10 +59,11 @@ competition data.
 │   ├── mcq_formatting.py    # question+option tokenization for multiple-choice models
 │   └── ensembling.py        # score averaging / Borda / RRF rank fusion
 │
-├── reports/                 # milestone plots + reports
-├── models/                  # trained model artifacts (baseline.joblib gitignored; LoRA adapter committed)
+├── reports/                 # milestone plots + reports + final_submission.csv
+├── models/                  # trained model artifacts (*.joblib gitignored; LoRA adapter committed)
 ├── data/rag_corpus/         # pre-built vector database for milestone 3 (committed)
 │
+├── app.py                   # Gradio demo (also deployable as-is to a HF Space)
 ├── requirements.txt
 └── README.md
 ```
@@ -106,9 +108,44 @@ change to scale up on a GPU (Kaggle/Colab).
 | 3 | `milestone-3.ipynb` | LLM limitations & RAG; a pre-built FAISS vector database (176 Wikipedia pages, 1087 passages, `data/rag_corpus/`); retrieval + context-augmented zero-shot | Retrieved context *hurt* mAP@3 here (0.440 → 0.423) — traced to a concrete retrieval-quality failure, reported honestly |
 | 4 | `milestone-4.ipynb` | MCQ data formatting for `AutoModelForMultipleChoice`; LoRA vs. full fine-tuning (real parameter counts); `TrainingArguments` efficiency knobs; a real LoRA fine-tune | mAP@3 improved 0.3375 (untrained head) → 0.5208 after fine-tuning on just 320 examples, 2 epochs |
 | 5 | `milestone-5.ipynb` | Logit extraction/sorting; ensembling (average/weighted/Borda/RRF/stacking) across all 5 models above; a confidence-gated hybrid | The single best model (baseline LogReg, 0.594) beat every 5-model ensemble (best: 0.5625) on the shared 80-question eval set — reported as-is, not cherry-picked |
+| Final | `final_notebook.ipynb` | Macro F1 + confusion matrix + error analysis on a clean 400-row held-out split; final full-data refit; submission generation; cross-milestone insights | mAP@3 = 0.535, Macro F1 = 0.359 on held-out data; final `reports/final_submission.csv` generated from a model refit on 100% of `train.csv` |
 
 Full context, code, and discussion for each result is in the corresponding
 notebook — the table above is a summary, not a replacement for reading them.
+
+## Final Submission
+
+**Model:** TF-IDF + LogisticRegression baseline (`src/utils.py` features,
+`src/train.py`), refit on 100% of `train.csv` after validating on a clean
+held-out split. Chosen over every fancier alternative built in milestones
+2-5 because it's the one that actually won an honest, leakage-checked
+comparison (`notebooks/final_notebook.ipynb`, section 6) — not the most
+sophisticated option, the empirically best one.
+
+`reports/final_submission.csv` is the submission-ready file (`ID,Prediction`,
+matching `sample_submission.csv`'s format exactly). To submit:
+
+- Upload it directly on the competition's Kaggle page ("Submit Predictions"), or
+- `kaggle competitions submit -c <competition-slug> -f reports/final_submission.csv -m "Final submission"`
+  if the Kaggle CLI is configured with your API credentials.
+
+Regenerate it (and `models/baseline_final.joblib`) by running
+`notebooks/final_notebook.ipynb` end-to-end.
+
+## Deployment Demo (Optional)
+
+`app.py` is a small Gradio app: enter a question and 5 options, get the
+model's top-3 ranked prediction. Uses `models/baseline_final.joblib` (falls
+back to `models/baseline.joblib` if the former hasn't been generated yet).
+
+```bash
+pip install -r requirements.txt
+python app.py
+```
+
+It's structured to deploy as-is to a Hugging Face Space (`app.py` +
+`requirements.txt` at the repo root is the standard convention) if you
+want a hosted version.
 
 ## Git Workflow (Mandatory)
 
