@@ -11,3 +11,4 @@ torch
 transformers
 datasets
 accelerate
+faiss-cpu
