@@ -7,3 +7,7 @@ jupyter
 kagglehub
 wandb
 joblib
+torch
+transformers
+datasets
+accelerate
