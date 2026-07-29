@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.venv/
+venv/
+env/
+
+# Data (downloaded via Kaggle API, not committed)
+data/*.csv
+!data/.gitkeep
+
+# Trained model artifacts
+models/*.pkl
+models/*.joblib
+models/*.pt
+models/*.h5
+!models/.gitkeep
+
+# Generated submissions / reports outputs
+submission*.csv
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# W&B
+wandb/
+
+# Env / secrets
+.env
+kaggle.json
+.claude/
