@@ -1,5 +1,4 @@
-# Smart MCQ Solver Challenge (tentative title)
-
+# Smart MCQ Solver Challenge 
 **Course:** Introduction to DL and GenAI [BSDA2001P]
 **Name:** VARUN CHOUDHARY
 **Roll No:** 24f2000187
