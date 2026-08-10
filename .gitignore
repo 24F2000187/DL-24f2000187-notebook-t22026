@@ -16,6 +16,8 @@ models/*.joblib
 models/*.pt
 models/*.h5
 !models/.gitkeep
+!models/baseline.joblib
+
 
 # Generated submissions / reports outputs
 submission*.csv
