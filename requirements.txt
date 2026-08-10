@@ -14,3 +14,5 @@ accelerate
 faiss-cpu
 peft
 gradio
+streamlit
+
